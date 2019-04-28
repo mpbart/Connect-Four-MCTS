@@ -110,7 +110,8 @@ class Board(object):
     while tmp_col < len(self.board[0])-1 and tmp_row > 0:
       tmp_col += 1
       tmp_row -= 1
-    while tmp_col >= 0 and tmp_row < len(self.board[0]):
+
+    while tmp_col > 0 and tmp_row < len(self.board):
       run.append(self.board[tmp_row][tmp_col])
       tmp_row += 1
       tmp_col -= 1
