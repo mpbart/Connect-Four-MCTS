@@ -17,7 +17,7 @@ class Game(object):
       column = self.get_move()
 
       while not self.board.add_piece(self.current_player.piece, column):
-        print 'That is not a valid move. Please select a differnt column'
+        print 'That is not a valid move. Please select a different column'
         column = self.get_move()
 
       self.board.print_board()

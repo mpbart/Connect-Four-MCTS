@@ -95,7 +95,7 @@ class Board(object):
   def __check_upper_left_diagonal(self, row, column):
     tmp_row, tmp_col = row, column
     run = []
-    while tmp_row < len(self.board)-1 and tmp_col < len(self.board[0])-1:
+    while tmp_row < ROWS-1 and tmp_col < COLUMNS-1:
       tmp_row += 1
       tmp_col += 1
     while tmp_col >= 0 and tmp_row >= 0:
@@ -107,11 +107,11 @@ class Board(object):
   def __check_upper_right_diagonal(self, row, column):
     tmp_row, tmp_col = row, column
     run = []
-    while tmp_col < len(self.board[0])-1 and tmp_row > 0:
+    while tmp_col < COLUMNS-1 and tmp_row > 0:
       tmp_col += 1
       tmp_row -= 1
 
-    while tmp_col > 0 and tmp_row < len(self.board):
+    while tmp_col >= 0 and tmp_row < ROWS:
       run.append(self.board[tmp_row][tmp_col])
       tmp_row += 1
       tmp_col -= 1
