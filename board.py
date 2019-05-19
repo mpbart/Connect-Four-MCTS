@@ -8,13 +8,20 @@ class Board(object):
     self.__last_row = None
     self.__last_column = None
     self.board = []
-    for row in range(ROWS):
+    for row in xrange(ROWS):
       self.board.append([])
-      for col in range(COLUMNS):
+      for col in xrange(COLUMNS):
         self.board[row].append(EMPTY_SPACE)
 
+  def make_copy(self):
+    b = Board()
+    for row in xrange(ROWS):
+      for col in xrange(COLUMNS):
+        b.board[row][col] = self.board[row][col]
+    return b
+
   def print_board(self):
-    for row in range(len(self.board)):
+    for row in xrange(len(self.board)):
       for space in self.board[row]:
         print space,
       print
@@ -24,7 +31,7 @@ class Board(object):
     if self.__column_filled(column):
       return False
 
-    for row in range(1, len(self.board)):
+    for row in xrange(1, len(self.board)):
       if self.board[row][column] != EMPTY_SPACE:
         self.board[row - 1][column] = piece
         self.__last_row = row - 1
@@ -41,9 +48,30 @@ class Board(object):
   def coordinate_of_most_recent_piece(self):
     return (self.__last_row, self.__last_column)
 
+  @property
+  def last_added_piece(self):
+    return self.board[self.__last_row][self.__last_column]
+
+  """
+  This function gives the weights to wins(1.0), losses(0.0), and draws(0.5)
+  """
+  def get_result_for_player(self, player_piece):
+    if self.is_draw:
+      return 0.5
+    elif self.last_added_piece == player_piece:
+      return 1.0
+    else:
+      return 0.0
+
+  def is_draw(self):
+    not self.winner_found and self.spaces_left == 0
+
   def winner_found(self):
     row, column = self.coordinate_of_most_recent_piece
     return self.vertical_winner(column) or self.horizontal_winner(row) or self.diagonal_winner(row, column)
+
+  def possible_moves(self):
+    return [i for i in xrange(COLUMNS) if not self.__column_filled(i)]
 
   def spaces_left(self):
     count = 0
@@ -60,7 +88,7 @@ class Board(object):
     return True
 
   def vertical_winner(self, column):
-    for row in range(len(self.board)-3):
+    for row in xrange(len(self.board)-3):
       if (self.board[row][column] == 'X' and
           self.board[row+1][column] == 'X' and
           self.board[row+2][column] == 'X' and
@@ -75,7 +103,7 @@ class Board(object):
 
 
   def horizontal_winner(self, row):
-    for col in range(len(self.board[row])-3):
+    for col in xrange(len(self.board[row])-3):
       if (self.board[row][col] == 'X' and
           self.board[row][col+1] == 'X' and
           self.board[row][col+2] == 'X' and
@@ -122,7 +150,7 @@ class Board(object):
     if len(run) < 4:
       return False
 
-    for i in range(len(run)-3):
+    for i in xrange(len(run)-3):
       if (run[i] == 'X' and
           run[i+1] == 'X' and
           run[i+2] == 'X' and

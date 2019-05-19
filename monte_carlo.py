@@ -1,25 +1,45 @@
-import time
+import random
+from tree import Node
 
 
 class MonteCarlo(object):
-  def __init__(self, tree):
-    self.tree = tree
+    def __init__(self, state, piece, iterations):
+      self.root = Node(state, piece)
+      self.computer_piece = piece
+      self.original_state = state
+      self.iterations = iterations
 
-  def next_move(self, board):
-    end_time = time.time() + 0.60
+    def get_move(self):
+      for i in xrange(self.iterations):
+          node = self.root
+          state = self.original_state.make_copy()
 
-    while time.time() <= end_time:
-      node = self.tree.root.select_move()
-      if not node.board.winner_found() and not node.board.spaces_left() == 0:
-        node.expand()
+          # Select
+          while len(node.untried_moves) == 0 and len(node.children) != 0:
+              node = node.uct_select_child()
+              state.add_piece(node.player_piece, node.column)
 
-      next_node = node
-      if len(node.children) > 0:
-        next_node = node.get_random_child()
+          # Expand
+          if len(node.untried_moves) != 0:
+              col = random.choice(node.untried_moves)
+              state.add_piece(node.player_piece, col)
+              node = node.add_child(col, state)
 
-      result = self.simulate_to_end(next_node)
-      self.record_results(next_node, result)
+          # Rollout
+          while state.spaces_left() != 0:
+              column = random.choice(state.possible_moves())
+              piece = self.get_next_piece(state.last_added_piece)
+              state.add_piece(piece, column)
 
-    child = self.tree.root.get_max_score_child()
-    _, col = child.board.coordinate_of_most_recent_piece
-    return col
+          # Backpropagate
+          while node is not None:
+              node.update(state.get_result_for_player(self.computer_piece))
+              node = node.parentNode
+
+      return sorted(self.root.children, key=lambda c: c.visits)[-1].column
+
+    def get_next_piece(self, piece):
+      if piece == 'X':
+        return 'O'
+      return 'X'
+
