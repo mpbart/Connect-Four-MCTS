@@ -5,8 +5,8 @@ EMPTY_SPACE = '.'
 
 class Board(object):
   def __init__(self):
-    self.__last_row = None
-    self.__last_column = None
+    self.__last_row = 0
+    self.__last_column = 0
     self.board = []
     for row in xrange(ROWS):
       self.board.append([])
@@ -56,7 +56,7 @@ class Board(object):
   This function gives the weights to wins(1.0), losses(0.0), and draws(0.5)
   """
   def get_result_for_player(self, player_piece):
-    if self.is_draw:
+    if self.is_draw():
       return 0.5
     elif self.last_added_piece == player_piece:
       return 1.0
@@ -71,6 +71,8 @@ class Board(object):
     return self.vertical_winner(column) or self.horizontal_winner(row) or self.diagonal_winner(row, column)
 
   def possible_moves(self):
+    if self.winner_found():
+      return []
     return [i for i in xrange(COLUMNS) if not self.__column_filled(i)]
 
   def spaces_left(self):

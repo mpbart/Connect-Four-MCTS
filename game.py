@@ -25,7 +25,7 @@ class Game(object):
           column = self.get_move()
 
       else:
-        column = MonteCarlo(self.board.make_copy(), self.current_player.piece, ITERATIONS).get_move()
+        column = MonteCarlo(self.board.make_copy(), 'O', ITERATIONS).get_move()
         print 'Computer chooses column', column
         self.board.add_piece(self.current_player.piece, column)
 

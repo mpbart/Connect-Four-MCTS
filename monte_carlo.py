@@ -26,7 +26,7 @@ class MonteCarlo(object):
               node = node.add_child(col, state)
 
           # Rollout
-          while state.spaces_left() != 0:
+          while len(state.possible_moves()) != 0:
               column = random.choice(state.possible_moves())
               piece = self.get_next_piece(state.last_added_piece)
               state.add_piece(piece, column)
