@@ -1,6 +1,7 @@
 from itertools import cycle
 from player import Player
 from board import Board
+from tree import Node
 from monte_carlo import MonteCarlo
 ITERATIONS = 10000
 
@@ -13,6 +14,7 @@ class Game(object):
     self.__advance_turn()
 
   def play(self):
+    node = Node(self.board, self.current_player.piece)
     print self.current_player.name, ' goes first'
     self.board.print_board()
 
@@ -25,11 +27,12 @@ class Game(object):
           column = self.get_move()
 
       else:
-        column = MonteCarlo(self.board.make_copy(), 'O', ITERATIONS).get_move()
+        node, column = MonteCarlo(self.board.make_copy(), 'O', ITERATIONS, last_node=node).get_move()
         print 'Computer chooses column', column
         self.board.add_piece(self.current_player.piece, column)
 
       self.board.print_board()
+      node = self.__navigate_to_node_for_move(node, column, self.board)
       if self.board.winner_found():
         print '***** ' + self.current_player.name + ' wins!'
         break
@@ -47,3 +50,9 @@ class Game(object):
 
   def __advance_turn(self):
     self.current_player = next(self.players)
+
+  def __navigate_to_node_for_move(self, node, column, board):
+    for child in node.children:
+      if child.column == column:
+        return child
+    return Node(board, node.current_player_piece)
